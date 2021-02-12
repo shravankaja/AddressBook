@@ -1,3 +1,4 @@
+import java.util.Scanner;
 
 public class AddressBook {
 	public String FIRST_NAME;
@@ -8,6 +9,7 @@ public class AddressBook {
 	public double ZIP_CODE;
 	public double PHONE_NUMBER;
 	public String EMAIL;
+	public int NO_OF_CONTACTS;
 
 	public AddressBook(String last_Name, String first_Name, String address, String city, String state,
 			double phone_Number, double zip_Code, String email) {
@@ -24,7 +26,7 @@ public class AddressBook {
 
 	public void display() {
 		System.out.println("First Name :" + FIRST_NAME);
-		System.out.println(" Last Name :" + LAST_NAME);
+		System.out.println("Last Name :" + LAST_NAME);
 		System.out.println("ADDRESS :" + ADDRESS);
 		System.out.println("CITY :" + CITY);
 		System.out.println("STATE :" + STATE);
