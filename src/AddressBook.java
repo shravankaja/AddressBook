@@ -1,13 +1,13 @@
 
 public class AddressBook {
-	public static String FIRST_NAME;
-	public static String LAST_NAME;
-	public static String ADDRESS;
-	public static String CITY;
-	public static String STATE;
-	public static double ZIP_CODE;
-	public static double PHONE_NUMBER;
-	public static String EMAIL;
+	public String FIRST_NAME;
+	public String LAST_NAME;
+	public String ADDRESS;
+	public String CITY;
+	public String STATE;
+	public double ZIP_CODE;
+	public double PHONE_NUMBER;
+	public String EMAIL;
 
 	public AddressBook(String last_Name, String first_Name, String address, String city, String state,
 			double phone_Number, double zip_Code, String email) {
@@ -22,7 +22,15 @@ public class AddressBook {
 
 	}
 
-	void display() {
-		System.out.println("Name you have added :" + FIRST_NAME);
+	public void display() {
+		System.out.println("First Name :" + FIRST_NAME);
+		System.out.println(" Last Name :" + LAST_NAME);
+		System.out.println("ADDRESS :" + ADDRESS);
+		System.out.println("CITY :" + CITY);
+		System.out.println("STATE :" + STATE);
+		System.out.println("ZIP :" + ZIP_CODE);
+		System.out.println("PHONE :" + PHONE_NUMBER);
+		System.out.println("EMAIL  :" + EMAIL);
 	}
+
 }
