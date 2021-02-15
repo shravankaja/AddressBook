@@ -12,7 +12,7 @@ public class AddressBook {
 	public int NO_OF_CONTACTS;
 	public String Address_Book_Name;
 	Map<String, List<AddressBook>> mapper = new HashMap<>();
-	List<AddressBook> address_Book_No = new ArrayList<>();
+
 	Scanner sc = new Scanner(System.in);
 	public int contacts_No;
 	boolean found_Not_Found;
@@ -35,11 +35,28 @@ public class AddressBook {
 
 	}
 
+	public void add_Address_Book() {
+		System.out.println("Enter Address Book Name \n");
+		String Address_Book_Name_test = sc.next();
+		try {
+			for (String s : mapper.keySet()) {
+				System.out.println("Keys " + s);
+				if (s.equals(Address_Book_Name_test)) {
+					System.out.println("Already exsists \n");
+				} else {
+					Address_Book_Name = Address_Book_Name_test;
+				}
+			}
+		} catch (NullPointerException e) {
+			System.out.println("No address books yet");
+		}
+	}
+
 	public void add() {
-		System.out.println("Enter Address Book Name");
+		System.out.println("Enter Address Book Name \n");
 
+		List<AddressBook> address_Book_No = new ArrayList<>();
 		Address_Book_Name = sc.next();
-
 		System.out.println("Enter Number of Contacts \n");
 
 		NO_OF_CONTACTS = sc.nextInt();
@@ -64,9 +81,9 @@ public class AddressBook {
 			address_Book_No
 					.add(new AddressBook(last_Name, first_Name, address, city, state, phone_Number, zip_Code, email));
 			contacts_No++;
-			mapper.put(Address_Book_Name, address_Book_No);
 
 		}
+		mapper.put(Address_Book_Name, address_Book_No);
 
 	}
 
@@ -75,6 +92,7 @@ public class AddressBook {
 
 		String address_Book = sc.next();
 		for (String s : mapper.keySet()) {
+			System.out.println("Keys " + s);
 			if (s.equals(address_Book)) {
 				flag = 0;
 				System.out.println("Current AddressBook: " + s);
@@ -116,33 +134,56 @@ public class AddressBook {
 					found_Not_Found = r.LAST_NAME.equals(last_Name_Edit);
 
 					if (found_Not_Found == true) {
-
+						System.out.println(
+								"Enter which you want edit 1.first_name 2.last_name 3. address 4. city 5.state 6. email 7. phone number  8. zip ");
+						int option = sc.nextInt();
 						System.out.println("Enter new details \n");
-						System.out.println("Enter first Name \n");
-						String first_Name = sc.next();
-						r.FIRST_NAME = first_Name;
-						System.out.println("Enter Address Lane \n");
-						String address = sc.next();
-						r.ADDRESS = address;
-						System.out.println("Enter City \n");
-						String city = sc.next();
-						r.CITY = city;
-						System.out.println("Enter state \n");
-						String state = sc.next();
-						r.STATE = state;
-						System.out.println("Enter Email \n");
-						String email = sc.next();
-						r.EMAIL = email;
-						System.out.println("Enter Phone Number \n");
-						Double phone_Number = sc.nextDouble();
-						r.PHONE_NUMBER = phone_Number;
-						System.out.println("Enter Zip Name \n");
-						Double zip_Code = sc.nextDouble();
-						r.ZIP_CODE = zip_Code;
-						System.out.println("Enter Last Name \n");
-						String last_Name = sc.next();
-						r.LAST_NAME = last_Name;
+						switch (option) {
+						case 1:
+							System.out.println("Enter first Name \n");
+							String first_Name = sc.next();
 
+							r.FIRST_NAME = first_Name;
+							break;
+						case 3:
+							System.out.println("Enter Address Lane \n");
+							String address = sc.next();
+							r.ADDRESS = address;
+							break;
+						case 4:
+							System.out.println("Enter City \n");
+							String city = sc.next();
+							r.CITY = city;
+							break;
+						case 5:
+							System.out.println("Enter state \n");
+							String state = sc.next();
+							r.STATE = state;
+							break;
+						case 6:
+							System.out.println("Enter Email \n");
+							String email = sc.next();
+							r.EMAIL = email;
+							break;
+						case 7:
+							System.out.println("Enter Phone Number \n");
+							Double phone_Number = sc.nextDouble();
+							r.PHONE_NUMBER = phone_Number;
+							break;
+						case 8:
+							System.out.println("Enter Zip Name \n");
+							Double zip_Code = sc.nextDouble();
+							r.ZIP_CODE = zip_Code;
+							break;
+						case 2:
+							System.out.println("Enter Last Name \n");
+							String last_Name = sc.next();
+							r.LAST_NAME = last_Name;
+							break;
+						default:
+							System.out.println("Invalid option");
+							break;
+						}
 					}
 				}
 			} else {
