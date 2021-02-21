@@ -11,7 +11,7 @@ public class AddressBook {
 	public String EMAIL;
 	public int NO_OF_CONTACTS;
 	public String Address_Book_Name;
-	public int duplicateNameCheck = 1;
+	public int duplicateNameCheck;
 	public String firstName;
 	public String cityName;
 	public String stateName;
@@ -68,6 +68,10 @@ public class AddressBook {
 		for (int i = 0; i < NO_OF_CONTACTS; i++) {
 			System.out.println("Enter first Name  \n");
 			String first_Name = sc.next();
+			if (duplicateEntriesCheck(first_Name)) {
+				System.out.println("Name already taken");
+				break;
+			}
 			System.out.println("Enter Address Lane \n");
 			String address = sc.next();
 			System.out.println("Enter City \n");
@@ -86,15 +90,23 @@ public class AddressBook {
 			String last_Name = sc.next();
 			address_Book_No
 					.add(new AddressBook(last_Name, first_Name, address, city, state, phone_Number, zip_Code, email));
-
 			contacts_No++;
 		}
 		mapper.put(Address_Book_Name, address_Book_No);
 		cityContactMap.put(cityName, address_Book_No);
-
 		cityContactsCount++;
 		stateContactMap.put(stateName, address_Book_No);
 		stateContactsCount++;
+	}
+
+	public boolean duplicateEntriesCheck(String firstName) {
+		for (AddressBook r : address_Book_No) {
+			if (r.FIRST_NAME.equals(firstName)) {
+				return true;
+			}
+
+		}
+		return false;
 	}
 
 	public void getCountCity() {
