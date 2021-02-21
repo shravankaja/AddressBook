@@ -11,6 +11,8 @@ public class AddressBook {
 	public String EMAIL;
 	public int NO_OF_CONTACTS;
 	public String Address_Book_Name;
+	public int duplicateNameCheck;
+	public String first_Name;
 	Map<String, List<AddressBook>> mapper = new HashMap<>();
 
 	Scanner sc = new Scanner(System.in);
@@ -60,10 +62,13 @@ public class AddressBook {
 		System.out.println("Enter Number of Contacts \n");
 
 		NO_OF_CONTACTS = sc.nextInt();
-
+		System.out.println("Enter first Name \n");
+		String first_Name = sc.next();	
+		duplicateNameCheck(first_Name,Address_Book_Name);
+		if(duplicateNameCheck==0)
+		{
 		for (int i = 0; i < NO_OF_CONTACTS; i++) {
-			System.out.println("Enter first Name \n");
-			String first_Name = sc.next();
+			
 			System.out.println("Enter Address Lane \n");
 			String address = sc.next();
 			System.out.println("Enter City \n");
@@ -81,13 +86,41 @@ public class AddressBook {
 			address_Book_No
 					.add(new AddressBook(last_Name, first_Name, address, city, state, phone_Number, zip_Code, email));
 			contacts_No++;
-
+			
+		}	
+		
+			mapper.put(Address_Book_Name, address_Book_No);
 		}
-		mapper.put(Address_Book_Name, address_Book_No);
+		else
+		{
+			System.out.println("Name Already exsists");
+		}
+	
+	}	
+	
 
+public void duplicateNameCheck(String first_Name,String Adddress_Book) {
+	for (String s : mapper.keySet()) {
+		
+		if (s.equals(Adddress_Book)) {
+			for (AddressBook r : mapper.get(Adddress_Book)) {
+				if(r.FIRST_NAME==first_Name)
+				{
+				 duplicateNameCheck=0;	
+				}
+				else {
+					duplicateNameCheck=1;
+				}
+			
+			}
+			
+		}
 	}
+	
+	
+}
 
-	public void display() {
+public void display() {
 		System.out.println("Enter address book name \n");
 
 		String address_Book = sc.next();
