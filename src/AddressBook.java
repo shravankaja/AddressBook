@@ -11,16 +11,20 @@ public class AddressBook {
 	public String EMAIL;
 	public int NO_OF_CONTACTS;
 	public String Address_Book_Name;
-	public int duplicateNameCheck;
-	public String first_Name;
+	public int duplicateNameCheck = 1;
+	public String firstName;
 	public String cityName;
 	public String stateName;
+	public int cityContactsCount = 0;
+	public int stateContactsCount = 0;
 	Map<String, List<AddressBook>> mapper = new HashMap<>();
 	Map<String, List<AddressBook>> cityContactMap = new HashMap<>();
 	Map<String, List<AddressBook>> stateContactMap = new HashMap<>();
+	List<AddressBook> address_Book_No = new ArrayList<>();
 	Scanner sc = new Scanner(System.in);
 	public int contacts_No;
 	boolean found_Not_Found;
+	public String firstNameCheck;
 	int flag;
 
 	public AddressBook() {
@@ -37,7 +41,6 @@ public class AddressBook {
 		this.ZIP_CODE = zip_Code;
 		this.PHONE_NUMBER = phone_Number;
 		this.EMAIL = email;
-
 	}
 
 	public void add_Address_Book() {
@@ -59,53 +62,59 @@ public class AddressBook {
 
 	public void add() {
 		System.out.println("Enter Address Book Name \n");
-		List<AddressBook> address_Book_No = new ArrayList<>();
 		Address_Book_Name = sc.next();
 		System.out.println("Enter Number of Contacts \n");
 		NO_OF_CONTACTS = sc.nextInt();
-		System.out.println("Enter first Name \n");
-		String first_Name = sc.next();
-		duplicateNameCheck(first_Name, Address_Book_Name);
-		if (duplicateNameCheck == 0) {
-			for (int i = 0; i < NO_OF_CONTACTS; i++) {
-				System.out.println("Enter Address Lane \n");
-				String address = sc.next();
-				System.out.println("Enter City \n");
-				String city = sc.next();
-				cityName = city;
-				System.out.println("Enter state \n");
-				String state = sc.next();
-				stateName = state;
-				System.out.println("Enter Email \n");
-				String email = sc.next();
-				System.out.println("Enter Phone Number \n");
-				Double phone_Number = sc.nextDouble();
-				System.out.println("Enter Zip Name \n");
-				Double zip_Code = sc.nextDouble();
-				System.out.println("Enter Last Name \n");
-				String last_Name = sc.next();
-				address_Book_No.add(
-						new AddressBook(last_Name, first_Name, address, city, state, phone_Number, zip_Code, email));
-				contacts_No++;
+		for (int i = 0; i < NO_OF_CONTACTS; i++) {
+			System.out.println("Enter first Name  \n");
+			String first_Name = sc.next();
+			System.out.println("Enter Address Lane \n");
+			String address = sc.next();
+			System.out.println("Enter City \n");
+			String city = sc.next();
+			cityName = city;
+			System.out.println("Enter state \n");
+			String state = sc.next();
+			stateName = state;
+			System.out.println("Enter Email \n");
+			String email = sc.next();
+			System.out.println("Enter Phone Number \n");
+			Double phone_Number = sc.nextDouble();
+			System.out.println("Enter Zip Name \n");
+			Double zip_Code = sc.nextDouble();
+			System.out.println("Enter Last Name \n");
+			String last_Name = sc.next();
+			address_Book_No
+					.add(new AddressBook(last_Name, first_Name, address, city, state, phone_Number, zip_Code, email));
+
+			contacts_No++;
+		}
+		mapper.put(Address_Book_Name, address_Book_No);
+		cityContactMap.put(cityName, address_Book_No);
+
+		cityContactsCount++;
+		stateContactMap.put(stateName, address_Book_No);
+		stateContactsCount++;
+	}
+
+	public void getCountCity() {
+		System.out.println("Enter city name \n");
+		String cityName = sc.next();
+		for (String s : cityContactMap.keySet()) {
+			if (s.equals(cityName)) {
+				int a = address_Book_No.size();
+				System.out.println("No of Contacts :" + a);
 			}
-			mapper.put(Address_Book_Name, address_Book_No);
-			cityContactMap.put(cityName, address_Book_No);
-			stateContactMap.put(stateName, address_Book_No);
-		} else {
-			System.out.println("Name Already exsists");
 		}
 	}
 
-	public void duplicateNameCheck(String first_Name, String Adddress_Book) {
-		for (String s : mapper.keySet()) {
-			if (s.equals(Adddress_Book)) {
-				for (AddressBook r : mapper.get(Adddress_Book)) {
-					if (r.FIRST_NAME == first_Name) {
-						duplicateNameCheck = 0;
-					} else {
-						duplicateNameCheck = 1;
-					}
-				}
+	public void getCountState() {
+		System.out.println("Enter state name \n");
+		String stateName = sc.next();
+		for (String s : stateContactMap.keySet()) {
+			if (s.equals(cityName)) {
+				int a = address_Book_No.size();
+				System.out.println("No of Contacts :" + a);
 			}
 		}
 	}
@@ -126,7 +135,6 @@ public class AddressBook {
 		if (flag == 1) {
 			System.out.println("Address Book not found");
 		}
-
 	}
 
 	public void displayCity() {
@@ -145,7 +153,6 @@ public class AddressBook {
 		if (flag == 1) {
 			System.out.println("Address Book not found");
 		}
-
 	}
 
 	public void displayState() {
@@ -176,7 +183,6 @@ public class AddressBook {
 		System.out.println("ZIP :" + ZIP_CODE);
 		System.out.println("PHONE :" + PHONE_NUMBER);
 		System.out.println("EMAIL  :" + EMAIL);
-
 	}
 
 	public void edit() {
@@ -188,10 +194,7 @@ public class AddressBook {
 			if (s.equals(Address_Book_Name_test)) {
 				System.out.println("Current key: " + s);
 				for (AddressBook r : mapper.get(s)) {
-
-					// addressbook obj1 = mapper.get(Address_Book_Name);
 					found_Not_Found = r.LAST_NAME.equals(last_Name_Edit);
-
 					if (found_Not_Found == true) {
 						System.out.println(
 								"Enter which you want edit 1.first_name 2.last_name 3. address 4. city 5.state 6. email 7. phone number  8. zip ");
@@ -272,8 +275,6 @@ public class AddressBook {
 			String key = entry.getKey();
 			if (key.equals(Address_Book_Name_test)) {
 				List<AddressBook> list = entry.getValue();
-
-				// to iterate over the list, you can try
 				for (int i = 0; i < list.size(); i++) {
 					AddressBook we = list.get(i);
 					found_Not_Found = we.LAST_NAME.equals(last_Name_Edit);
@@ -285,8 +286,6 @@ public class AddressBook {
 			} else {
 				System.out.println("AddressBookNotffoundd");
 			}
-
 		}
-
 	}
 }
