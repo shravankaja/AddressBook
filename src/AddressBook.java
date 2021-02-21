@@ -63,64 +63,54 @@ public class AddressBook {
 
 		NO_OF_CONTACTS = sc.nextInt();
 		System.out.println("Enter first Name \n");
-		String first_Name = sc.next();	
-		duplicateNameCheck(first_Name,Address_Book_Name);
-		if(duplicateNameCheck==0)
-		{
-		for (int i = 0; i < NO_OF_CONTACTS; i++) {
-			
-			System.out.println("Enter Address Lane \n");
-			String address = sc.next();
-			System.out.println("Enter City \n");
-			String city = sc.next();
-			System.out.println("Enter state \n");
-			String state = sc.next();
-			System.out.println("Enter Email \n");
-			String email = sc.next();
-			System.out.println("Enter Phone Number \n");
-			Double phone_Number = sc.nextDouble();
-			System.out.println("Enter Zip Name \n");
-			Double zip_Code = sc.nextDouble();
-			System.out.println("Enter Last Name \n");
-			String last_Name = sc.next();
-			address_Book_No
-					.add(new AddressBook(last_Name, first_Name, address, city, state, phone_Number, zip_Code, email));
-			contacts_No++;
-			
-		}	
-		
+		String first_Name = sc.next();
+		duplicateNameCheck(first_Name, Address_Book_Name);
+		if (duplicateNameCheck == 0) {
+			for (int i = 0; i < NO_OF_CONTACTS; i++) {
+
+				System.out.println("Enter Address Lane \n");
+				String address = sc.next();
+				System.out.println("Enter City \n");
+				String city = sc.next();
+				System.out.println("Enter state \n");
+				String state = sc.next();
+				System.out.println("Enter Email \n");
+				String email = sc.next();
+				System.out.println("Enter Phone Number \n");
+				Double phone_Number = sc.nextDouble();
+				System.out.println("Enter Zip Name \n");
+				Double zip_Code = sc.nextDouble();
+				System.out.println("Enter Last Name \n");
+				String last_Name = sc.next();
+				address_Book_No.add(
+						new AddressBook(last_Name, first_Name, address, city, state, phone_Number, zip_Code, email));
+				contacts_No++;
+
+			}
+
 			mapper.put(Address_Book_Name, address_Book_No);
-		}
-		else
-		{
+		} else {
 			System.out.println("Name Already exsists");
 		}
-	
-	}	
-	
 
-public void duplicateNameCheck(String first_Name,String Adddress_Book) {
-	for (String s : mapper.keySet()) {
-		
-		if (s.equals(Adddress_Book)) {
-			for (AddressBook r : mapper.get(Adddress_Book)) {
-				if(r.FIRST_NAME==first_Name)
-				{
-				 duplicateNameCheck=0;	
+	}
+
+	public void duplicateNameCheck(String first_Name, String Adddress_Book) {
+		for (String s : mapper.keySet()) {
+
+			if (s.equals(Adddress_Book)) {
+				for (AddressBook r : mapper.get(Adddress_Book)) {
+					if (r.FIRST_NAME == first_Name) {
+						duplicateNameCheck = 0;
+					} else {
+						duplicateNameCheck = 1;
+					}
 				}
-				else {
-					duplicateNameCheck=1;
-				}
-			
 			}
-			
 		}
 	}
-	
-	
-}
 
-public void display() {
+	public void display() {
 		System.out.println("Enter address book name \n");
 
 		String address_Book = sc.next();
@@ -221,6 +211,18 @@ public void display() {
 				}
 			} else {
 				System.out.println("Address book not fond");
+			}
+		}
+	}
+
+	public void searchContactByStateOrCity() {
+		System.out.println("Enter state or city  \n");
+		String stateOrCity = sc.next();
+		for (String s : mapper.keySet()) {
+			for (AddressBook r : mapper.get(s)) {
+				if (r.STATE.equals(stateOrCity) || r.CITY.equals(stateOrCity)) {
+					r.display1();
+				}
 			}
 		}
 	}
