@@ -2,7 +2,7 @@ import java.util.*;
 
 public class AddressBookMain {
     public static void main(String Args[]) {
-        AddressBook m = new AddressBook();
+        AddressBook addressBook = new AddressBook();
         Scanner sc = new Scanner(System.in);
         while (true) {
             System.out.println(
@@ -12,40 +12,40 @@ public class AddressBookMain {
             int option = sc.nextInt();
             switch (option) {
                 case 1:
-                    m.add();
+                    addressBook.add();
                     break;
                 case 2:
-                    m.edit();
+                    addressBook.edit();
                     break;
                 case 3:
-                    m.delete();
+                    addressBook.delete();
                     break;
                 case 4:
-                    m.display();
+                    addressBook.display();
                     break;
                 case 5:
-                    m.add_Address_Book();
+                    addressBook.add_Address_Book();
                     break;
                 case 6:
-                    m.searchContactByStateOrCity();
+                    addressBook.searchContactByStateOrCity();
                     break;
                 case 7:
-                    m.displayCity();
+                    addressBook.displayCity();
                     break;
                 case 8:
-                    m.displayState();
+                    addressBook.displayState();
                     break;
                 case 9:
-                    m.getCountCity();
+                    addressBook.getCountCity();
                     break;
                 case 10:
-                    m.getCountState();
+                    addressBook.getCountState();
                     break;
                 case 11:
-                    m.sortAlphabetically();
+                    addressBook.sortAlphabetically();
                     break;
                 case 12:
-                    m.sortUsingCityStateOrPin();
+                    addressBook.sortUsingCityStateOrPin();
                     break;
                 case 0:
                     break;

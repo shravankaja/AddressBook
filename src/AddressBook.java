@@ -92,7 +92,6 @@ public class AddressBook {
         if (num > 0) {
             return true;
         }
-        System.out.println("duplicate entries :" + num);
         return false;
     }
 
@@ -118,7 +117,6 @@ public class AddressBook {
         Address_Book_Name = sc.next();
         System.out.println("Enter Number of Contacts \n");
         NO_OF_CONTACTS = sc.nextInt();
-
         for (int i = 0; i < NO_OF_CONTACTS; i++) {
             System.out.println("Enter first Name  \n");
             String first_Name = sc.next();
@@ -148,7 +146,6 @@ public class AddressBook {
                     .add(new AddressBook(last_Name, first_Name, address, cityName, stateName, phone_Number, zip_Code, email));
             stateContactMap.computeIfAbsent(stateName, stateName -> new ArrayList<>())
                     .add(new AddressBook(last_Name, first_Name, address, cityName, stateName, phone_Number, zip_Code, email));
-            System.out.println(cityContactMap);
         }
     }
 
@@ -332,7 +329,9 @@ public class AddressBook {
                 List<AddressBook> listSorted = new ArrayList<AddressBook>();
                 listSorted = mapper.entrySet().stream().filter(e -> e.getKey().equals(addressBookName)).flatMap(e -> e.getValue()
                         .stream().sorted(cityCommparator)).collect(Collectors.toList());
-                System.out.println(listSorted.toString());
+                for (AddressBook r : listSorted) {
+                    r.display1();
+                }
                 break;
             case 2:
                 System.out.println("Enter address book name");
@@ -340,7 +339,9 @@ public class AddressBook {
                 List<AddressBook> listSortedState = new ArrayList<AddressBook>();
                 listSortedState = mapper.entrySet().stream().filter(e -> e.getKey().equals(addressBookNameState)).
                         flatMap(e -> e.getValue().stream().sorted(stateCommparator)).collect(Collectors.toList());
-                System.out.println(listSortedState.toString());
+                for (AddressBook r : listSortedState) {
+                    r.display1();
+                }
                 break;
             case 3:
                 System.out.println("Enter address book name");
@@ -348,7 +349,9 @@ public class AddressBook {
                 List<AddressBook> listSortedZip = new ArrayList<AddressBook>();
                 listSortedState = mapper.entrySet().stream().filter(e -> e.getKey().equals(addressBookNameZip)).
                         flatMap(e -> e.getValue().stream().sorted(zipCommparator)).collect(Collectors.toList());
-                System.out.println(listSortedState.toString());
+                for (AddressBook r : listSortedState) {
+                    r.display1();
+                }
                 break;
             default:
                 System.out.println("Inavalid choice");
