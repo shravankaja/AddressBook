@@ -1,3 +1,5 @@
+import java.io.*;
+import java.nio.file.*;
 import java.util.*;
 import java.util.stream.*;
 
@@ -21,7 +23,7 @@ public class AddressBook {
     Map<String, List<AddressBook>> mapper = new HashMap<>();
     Map<String, List<AddressBook>> cityContactMap = new HashMap<>();
     Map<String, List<AddressBook>> stateContactMap = new HashMap<>();
-    List<AddressBook> address_Book_No = new ArrayList<>();
+    ArrayList<AddressBook> address_Book_No = new ArrayList<>();
     Scanner sc = new Scanner(System.in);
     public int contacts_No;
     boolean found_Not_Found;
@@ -112,7 +114,8 @@ public class AddressBook {
         }
     }
 
-    public void add() {
+    public void add() throws IOException {
+
         System.out.println("Enter Address Book Name \n");
         Address_Book_Name = sc.next();
         System.out.println("Enter Number of Contacts \n");
@@ -142,10 +145,18 @@ public class AddressBook {
             String last_Name = sc.next();
             mapper.computeIfAbsent(Address_Book_Name, Address_Book_Name -> new ArrayList<>())
                     .add(new AddressBook(last_Name, first_Name, address, cityName, stateName, phone_Number, zip_Code, email));
+
+            AddressBook fileObject = new AddressBook(last_Name, first_Name, address, cityName, stateName, phone_Number, zip_Code,
+                    email);
+            writeToFile(Address_Book_Name, fileObject);
+
             cityContactMap.computeIfAbsent(cityName, cityName -> new ArrayList<>())
                     .add(new AddressBook(last_Name, first_Name, address, cityName, stateName, phone_Number, zip_Code, email));
+            writeToFile(cityName, new AddressBook(last_Name, first_Name, address, cityName, stateName, phone_Number, zip_Code, email));
             stateContactMap.computeIfAbsent(stateName, stateName -> new ArrayList<>())
                     .add(new AddressBook(last_Name, first_Name, address, cityName, stateName, phone_Number, zip_Code, email));
+            writeToFile(stateName, new AddressBook(last_Name, first_Name, address, cityName, stateName, phone_Number
+                    , zip_Code, email));
         }
     }
 
@@ -167,21 +178,24 @@ public class AddressBook {
         System.out.println("Size " + num);
     }
 
-    public void display() {
+    public void display() throws FileNotFoundException {
         System.out.println("Enter address book name \n");
         String address_Book = sc.next();
-        for (String s : mapper.keySet()) {
-            System.out.println("Keys " + s);
-            if (s.equals(address_Book)) {
-                flag = 0;
-                System.out.println("Current AddressBook: " + s);
-                for (AddressBook r : mapper.get(s)) {
-                    r.display1();
+        Path addressBookDirectory = Paths.get("E:\\Eclipse_Practise\\AddressBook\\DataFiles");
+        File fileObject = addressBookDirectory.toFile();
+        File[] listOfFiles = fileObject.listFiles();
+        if (Files.isDirectory(addressBookDirectory)) {
+            String newFile = addressBookDirectory + "/" + address_Book + ".txt";
+            Path newFilePath = Paths.get(newFile);
+            if (Files.exists(newFilePath)) {
+                File myObj = new File(String.valueOf(newFilePath));
+                Scanner myReader = new Scanner(myObj);
+                while (myReader.hasNextLine()) {
+                    String data = myReader.nextLine();
+                    System.out.println(data);
                 }
+                myReader.close();
             }
-        }
-        if (flag == 1) {
-            System.out.println("Address Book not found");
         }
     }
 
@@ -356,6 +370,50 @@ public class AddressBook {
             default:
                 System.out.println("Inavalid choice");
                 break;
+        }
+    }
+
+    public void writeToFile(String AddressBookName, AddressBook fileObjectToBeWritten) throws IOException {
+        Path directoryPath = Paths.get("E:\\Eclipse_Practise\\AddressBook\\DataFiles");
+        File directoryObject = directoryPath.toFile();
+        if (Files.isDirectory(directoryPath)) {
+            String fileName = directoryPath + "/" + AddressBookName + ".txt";
+            Path filePath = Paths.get(fileName);
+            File fileObject = filePath.toFile();
+            if (!Files.exists(filePath)) {
+                Files.createFile(filePath);
+                BufferedWriter out = new BufferedWriter(
+                        new FileWriter(String.valueOf(filePath)));
+                appendStrToFile(String.valueOf(filePath), "-" + System.lineSeparator());
+                appendStrToFile(String.valueOf(filePath), " First Name : " + fileObjectToBeWritten.FIRST_NAME + System.lineSeparator());
+                appendStrToFile(String.valueOf(filePath), " Last Name : " + fileObjectToBeWritten.LAST_NAME + System.lineSeparator());
+                appendStrToFile(String.valueOf(filePath), " Phone  : " + fileObjectToBeWritten.PHONE_NUMBER + System.lineSeparator());
+                appendStrToFile(String.valueOf(filePath), " Email  : " + fileObjectToBeWritten.EMAIL + System.lineSeparator());
+                appendStrToFile(String.valueOf(filePath), " State  : " + fileObjectToBeWritten.STATE + System.lineSeparator());
+                appendStrToFile(String.valueOf(filePath), " Address  : " + fileObjectToBeWritten.ADDRESS + System.lineSeparator());
+                appendStrToFile(String.valueOf(filePath), " Zip  : " + fileObjectToBeWritten.ZIP_CODE + System.lineSeparator());
+                appendStrToFile(String.valueOf(filePath), " City  : " + fileObjectToBeWritten.CITY + System.lineSeparator());
+            } else if (Files.exists(filePath)) {
+                appendStrToFile(String.valueOf(filePath), "-" + System.lineSeparator());
+                appendStrToFile(String.valueOf(filePath), " First Name : " + fileObjectToBeWritten.FIRST_NAME + System.lineSeparator());
+                appendStrToFile(String.valueOf(filePath), " Last Name : " + fileObjectToBeWritten.LAST_NAME + System.lineSeparator());
+                appendStrToFile(String.valueOf(filePath), " Phone  : " + fileObjectToBeWritten.PHONE_NUMBER + System.lineSeparator());
+                appendStrToFile(String.valueOf(filePath), " Email  : " + fileObjectToBeWritten.EMAIL + System.lineSeparator());
+                appendStrToFile(String.valueOf(filePath), " State  : " + fileObjectToBeWritten.STATE + System.lineSeparator());
+                appendStrToFile(String.valueOf(filePath), " Address  : " + fileObjectToBeWritten.ADDRESS + System.lineSeparator());
+                appendStrToFile(String.valueOf(filePath), " Zip  : " + fileObjectToBeWritten.ZIP_CODE + System.lineSeparator());
+                appendStrToFile(String.valueOf(filePath), " City  : " + fileObjectToBeWritten.CITY + System.lineSeparator());
+            }
+        }
+    }
+
+    public static void appendStrToFile(String fileName, String str) {
+        try {
+            BufferedWriter out = new BufferedWriter(new FileWriter(fileName, true));
+            out.write(str);
+            out.close();
+        } catch (IOException e) {
+            System.out.println("exception occoured" + e);
         }
     }
 }
