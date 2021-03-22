@@ -10,6 +10,7 @@ import org.json.*;
 
 import java.io.*;
 import java.nio.file.*;
+import java.sql.*;
 import java.util.*;
 import java.util.stream.*;
 
@@ -33,6 +34,14 @@ public class AddressBook {
     public static int NO_OF_CONTACTS;
     public static String Address_Book_Name;
     boolean found_Not_Found;
+    String addressBookName;
+    String contactType;
+    String country;
+    String street;
+    int PHONE;
+    ArrayList<HashMap<String, List<AddressBook>>> list = new ArrayList<>();
+    ArrayList<AddressBook> listOfTableObjects = new ArrayList<>();
+    HashMap<String, List<AddressBook>> contactFirstNameListTables = new HashMap<>();
 
     public AddressBook() {
         // TODO Auto-generated constructor stub
@@ -49,6 +58,29 @@ public class AddressBook {
         this.PHONE_NUMBER = PHONE_NUMBER;
         this.EMAIL = EMAIL;
     }
+
+    public AddressBook(String FIRST_NAME, String LAST_NAME, int PHONE, String EMAIL, String addressBookName) {
+        this.FIRST_NAME = FIRST_NAME;
+        this.LAST_NAME = LAST_NAME;
+        this.PHONE = PHONE;
+        this.EMAIL = EMAIL;
+        this.addressBookName = addressBookName;
+    }
+
+    public AddressBook(String FIRST_NAME, String contactType) {
+        this.FIRST_NAME = FIRST_NAME;
+        this.contactType = contactType;
+    }
+
+    public AddressBook(String CITY, String STATE, String ZIP_CODE, String country, String street, String FIRST_NAME) {
+        this.CITY = CITY;
+        this.STATE = STATE;
+        this.ZIP_CODE = ZIP_CODE;
+        this.country = country;
+        this.street = street;
+        this.FIRST_NAME = FIRST_NAME;
+    }
+
 
     public String getFIRST_NAME() {
         return FIRST_NAME;
@@ -230,36 +262,65 @@ public class AddressBook {
         System.out.println("Size " + num);
     }
 
-    public void display() throws IOException, JSONException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        System.out.println("Enter address book name \n");
-        String address_Book = sc.next();
-        Path addressBookDirectory = Paths.get("E:\\Eclipse_Practise\\AddressBook\\GsonModule\\DataFiles");
-        File fileObject = addressBookDirectory.toFile();
-        File[] listOfFiles = fileObject.listFiles();
-        if (Files.isDirectory(addressBookDirectory)) {
-            String newFile = addressBookDirectory + "/" + address_Book + ".json";
-            Path newFilePath = Paths.get(newFile);
-            if (Files.exists(newFilePath)) {
-                File myObj = new File(String.valueOf(newFilePath));
-                Scanner myReader = new Scanner(myObj);
-                ObjectMapper objectMapper1 = new ObjectMapper();
-                SimpleModule simpleModule = new SimpleModule();
-                simpleModule.addDeserializer(AddressBook.class, new AddressBookDeserializer());
-                objectMapper1.registerModule(simpleModule);
-                String content = new Scanner(new File(String.valueOf(newFilePath))).useDelimiter("\\Z").next();
-                JSONArray jsonArray = new JSONArray(content);
-                for( int i=0 ; i<jsonArray.length();i++)
-                {
-                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-                    String jsonObjectAsString = jsonObject.toString();
-                    AddressBook r = objectMapper1.readValue(jsonObjectAsString,AddressBook.class);
-                    r.display1();
-                }
-            }
+    public Connection connectToDatabase() {
+        String jdbcURL = "jdbc:mysql://localhost:3306/addressbook?allowPublicKeyRetrieval=true&useSSL=false";
+        String userName = "root";
+        String password = "Addtexthere25";
+        Connection connection = null;  //database connection
+        String connectionString = null;
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            System.out.println("Driver loaded");
+
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException("No drivers loaded ", e);
         }
+        try {
+            System.out.println("Connectin to " + jdbcURL);
+            connection = DriverManager.getConnection(jdbcURL, userName, password);
+            System.out.println(connection);
+            connectionString = connection.toString();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return connection;
     }
 
+    public int display() throws IOException, JSONException {
+        int result = 0;
+        String sql = " select cd.*,c_d.street,c_d.city,c_d.state,c_d.zip,c_d.country,ct.contact_type " +
+                "from contact_details as cd inner join contact_addresses as c_d on cd.first_name=c_d.first_name inner\n" +
+                " join contact_types as ct on cd.first_name=ct.first_name;";
+        try {
+            Connection connection = this.connectToDatabase();
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+            while (resultSet.next()) {
+                String firstName = resultSet.getString("first_name");
+                String lastName = resultSet.getString("last_name");
+                int phone = resultSet.getInt("phone_number");
+                String email = resultSet.getString("email");
+                String addressBooKName = resultSet.getString("address_book_name");
+                String street = resultSet.getString("street");
+                String state = resultSet.getString("state");
+                String zip = resultSet.getString("zip");
+                String city = resultSet.getString("city");
+                String country = resultSet.getString("country");
+                String contactType = resultSet.getString("contact_type");
+                listOfTableObjects.add(new AddressBook(street, city, state, zip, country, firstName));
+                listOfTableObjects.add(new AddressBook(firstName, contactType));
+                listOfTableObjects.add(new AddressBook(firstName, lastName, phone, email, addressBooKName));
+                contactFirstNameListTables.put(firstName, listOfTableObjects);
+            }
+            result = contactFirstNameListTables.size();
+            list.add(contactFirstNameListTables);
+
+
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return result;
+    }
 
     public void displayCity() {
         System.out.println("Enter  City name  \n");
