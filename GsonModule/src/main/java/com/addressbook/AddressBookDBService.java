@@ -155,11 +155,24 @@ public class AddressBookDBService {
         return s != null && s.matches("[-+]?\\d*\\.?\\d+");
     }
 
-    public int getContactsAddedFromDate(String date) throws SQLException {
+    public int getContactsGivenDateStateOrCity(String value) throws SQLException {
         int numberOfContacts = 0;
+        String sql = null;
+        ArrayList<String> cities = new ArrayList<String>(
+                Arrays.asList("Hyderabad", "Delhi"));
+        ArrayList<String> states = new ArrayList<String>(
+                Arrays.asList("Telanagana", "Karnataka"));
         ArrayList<String> namesOfContacts = new ArrayList<>();
-        String sql = String.format("select first_name from contact_details where date_added between " +
-                " cast('%s' as date) and date(now())", date);
+        if (value.contains("-")) {
+            sql = String.format("select first_name from contact_details where date_added between " +
+                    " cast('%s' as date) and date(now())", value);
+        } else if (cities.contains(value)) {
+            sql = String.format("select cd.first_name from contact_details as cd inner join contact_addresses " +
+                    "as ca on cd.first_name=ca.first_name where city='%s'", value);
+        } else if (states.contains(value)) {
+            sql = String.format("select cd.first_name from contact_details as cd inner join contact_addresses " +
+                    "as ca on cd.first_name=ca.first_name where state='%s'", value);
+        }
         Statement statement = this.returnStatementAfterConnection(this.initiateConnection());
         ResultSet resultSet = statement.executeQuery(sql);
         while (resultSet.next()) {
