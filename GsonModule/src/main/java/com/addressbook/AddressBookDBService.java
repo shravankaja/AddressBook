@@ -154,4 +154,19 @@ public class AddressBookDBService {
     public boolean isNumeric(String s) {
         return s != null && s.matches("[-+]?\\d*\\.?\\d+");
     }
+
+    public int getContactsAddedFromDate(String date) throws SQLException {
+        int numberOfContacts = 0;
+        ArrayList<String> namesOfContacts = new ArrayList<>();
+        String sql = String.format("select first_name from contact_details where date_added between " +
+                " cast('%s' as date) and date(now())", date);
+        Statement statement = this.returnStatementAfterConnection(this.initiateConnection());
+        ResultSet resultSet = statement.executeQuery(sql);
+        while (resultSet.next()) {
+            String name = resultSet.getString("first_name");
+            namesOfContacts.add(name);
+        }
+        numberOfContacts = namesOfContacts.size();
+        return numberOfContacts;
+    }
 }
