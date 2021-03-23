@@ -309,6 +309,16 @@ public class AddressBook {
         return false;
     }
 
+    public int getContactsAddedInDateRange(String date) throws AddressBookException, SQLException {
+        int result = addressBookDBService.getContactsAddedFromDate(date);
+        if (result == 0) try {
+            throw new AddressBookException("No records");
+        } catch (AddressBookException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
     public void displayCity() {
         System.out.println("Enter  City name  \n");
         String cityNameFilter = sc.next();
