@@ -182,4 +182,84 @@ public class AddressBookDBService {
         numberOfContacts = namesOfContacts.size();
         return numberOfContacts;
     }
+
+    public List<AddressBook> write(String state, String street, String city, String contactType,
+                                   String country, String firstName, String lastName,
+                                   String addressBookName, String dateAdded, int zip, String email,
+                                   int phoneNumber) {
+
+        Connection connection = null;
+        Statement statement = null;
+        try {
+            connection = this.initiateConnection();
+            connection.setAutoCommit(false);
+            statement = connection.createStatement();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+
+            String sql = String.format("insert into contact_details (first_name,last_name,phone_number,email" +
+                    ",address_book_name,date_added) values ('%s','%s',%s,'%s','%s',cast('%s' as date))" +
+                    "", firstName, lastName, phoneNumber, email, addressBookName, dateAdded);
+            int result = statement.executeUpdate(sql);
+            if (result == 0) throw new AddressBookException("Unable To Add");
+
+        } catch (SQLException | AddressBookException exception) {
+            exception.printStackTrace();
+            try {
+                connection.rollback();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try {
+
+            String sql = String.format("insert into contact_addresses(street,city,state,zip,country,first_name) " +
+                    "values ('%s','%s','%s',%s,'%s','%s')", street, city, state, zip, country, firstName);
+            int result = statement.executeUpdate(sql);
+            if (result == 0) throw new AddressBookException("Unable To Add");
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+            try {
+                connection.rollback();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } catch (AddressBookException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            String sql = String.format("insert into contact_types(first_name,contact_type) values " +
+                    "('%s','%s')", firstName, contactType);
+            int result = statement.executeUpdate(sql);
+            if (result == 0) throw new AddressBookException("Unable To Add");
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        } catch (AddressBookException e) {
+            e.printStackTrace();
+        }
+        try {
+            connection.commit();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            try {
+                connection.rollback();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+            }
+        }
+        return this.getContactObject(firstName);
+    }
 }
