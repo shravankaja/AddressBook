@@ -45,9 +45,12 @@ public class TestAddressBook {
     }
 
     @Test
-    void givenTest() throws SQLException, AddressBookException {
+    void givenValueToBeEditedForAContactToUpdateDatabase() throws SQLException, AddressBookException {
         Assertions.assertTrue(addressBook.update("email", "abc@hu.com", "Abby"));
     }
 
-
+    @Test
+    void givenDateRangeWeShouldBeAbleToGetNumberORecords() throws SQLException, AddressBookException {
+        Assertions.assertEquals(3, addressBook.getContactsAddedInDateRange("2018-01-01"));
+    }
 }
