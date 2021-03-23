@@ -319,6 +319,22 @@ public class AddressBook {
         return result;
     }
 
+    public boolean writeToDatabase(String state, String street, String city, String contactType,
+                                   String country, String firstName, String lastName,
+                                   String addressBookName, String dateAdded, int zip, String email,
+                                   int phoneNumber) {
+        List<AddressBook> list = new ArrayList<>();
+        List<AddressBook> listCheck = new ArrayList<>();
+        list = addressBookDBService.write(state, street, city, contactType,
+                country, firstName, lastName,
+                addressBookName, dateAdded, zip, email, phoneNumber);
+        listCheck = addressBookDBService.getContactObject(firstName);
+        if (list.equals(listCheck)) {
+            return true;
+        }
+        return false;
+    }
+
 
     public void displayCity() {
         System.out.println("Enter  City name  \n");
