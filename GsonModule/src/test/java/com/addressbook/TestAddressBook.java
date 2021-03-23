@@ -51,6 +51,13 @@ public class TestAddressBook {
 
     @Test
     void givenDateRangeWeShouldBeAbleToGetNumberORecords() throws SQLException, AddressBookException {
-        Assertions.assertEquals(3, addressBook.getContactsAddedInDateRange("2018-01-01"));
+        Assertions.assertEquals(2, addressBook.getContactsGivenDateStateOrCity("Telanagana"));
+    }
+
+    @Test
+    void givenDataRecordShouldBeUpatedInAllTables() {
+        Assertions.assertTrue(addressBook.writeToDatabase("Haryana", "GNagar", "Hyderabad",
+                "Friend", "India", "Bill", "Kaja", "ki",
+                "2018-01-26", 50006, "SS@gmail.com", 741852));
     }
 }
