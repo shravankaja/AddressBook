@@ -42,6 +42,7 @@ public class AddressBook {
     ArrayList<HashMap<String, List<AddressBook>>> list = new ArrayList<>();
     ArrayList<AddressBook> listOfTableObjects = new ArrayList<>();
     HashMap<String, List<AddressBook>> contactFirstNameListTables = new HashMap<>();
+    AddressBookDBService addressBookDBService = new AddressBookDBService();
 
     public AddressBook() {
         // TODO Auto-generated constructor stub
@@ -287,39 +288,25 @@ public class AddressBook {
     }
 
     public int display() throws IOException, JSONException {
+        ArrayList<HashMap<String, List<AddressBook>>> list = new ArrayList<>();
         int result = 0;
         String sql = " select cd.*,c_d.street,c_d.city,c_d.state,c_d.zip,c_d.country,ct.contact_type " +
                 "from contact_details as cd inner join contact_addresses as c_d on cd.first_name=c_d.first_name inner\n" +
-                " join contact_types as ct on cd.first_name=ct.first_name;";
-        try {
-            Connection connection = this.connectToDatabase();
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(sql);
-            while (resultSet.next()) {
-                String firstName = resultSet.getString("first_name");
-                String lastName = resultSet.getString("last_name");
-                int phone = resultSet.getInt("phone_number");
-                String email = resultSet.getString("email");
-                String addressBooKName = resultSet.getString("address_book_name");
-                String street = resultSet.getString("street");
-                String state = resultSet.getString("state");
-                String zip = resultSet.getString("zip");
-                String city = resultSet.getString("city");
-                String country = resultSet.getString("country");
-                String contactType = resultSet.getString("contact_type");
-                listOfTableObjects.add(new AddressBook(street, city, state, zip, country, firstName));
-                listOfTableObjects.add(new AddressBook(firstName, contactType));
-                listOfTableObjects.add(new AddressBook(firstName, lastName, phone, email, addressBooKName));
-                contactFirstNameListTables.put(firstName, listOfTableObjects);
-            }
-            result = contactFirstNameListTables.size();
-            list.add(contactFirstNameListTables);
-
-
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+                " join contact_types as ct on cd.first_name=ct.first_name";
+        list = addressBookDBService.readData(sql);
+        result = list.size();
         return result;
+    }
+
+    public boolean update(String columnToBeEdited, String value, String firstName) throws SQLException, AddressBookException {
+        List<AddressBook> list = new ArrayList<>();
+        List<AddressBook> listCheck = new ArrayList<>();
+        list = addressBookDBService.update(columnToBeEdited, value, firstName);
+        listCheck = addressBookDBService.getContactObject(firstName);
+        if (list.equals(listCheck)) {
+            return true;
+        }
+        return false;
     }
 
     public void displayCity() {
@@ -546,6 +533,7 @@ public class AddressBook {
 
         }
     }
+
 
 }
 
