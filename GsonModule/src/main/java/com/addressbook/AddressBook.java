@@ -39,6 +39,7 @@ public class AddressBook {
     String country;
     String street;
     int PHONE;
+    String dateAdded;
     ArrayList<HashMap<String, List<AddressBook>>> list = new ArrayList<>();
     ArrayList<AddressBook> listOfTableObjects = new ArrayList<>();
     HashMap<String, List<AddressBook>> contactFirstNameListTables = new HashMap<>();
@@ -82,6 +83,65 @@ public class AddressBook {
         this.FIRST_NAME = FIRST_NAME;
     }
 
+    public AddressBook(String STATE, String street, String CITY, String contactType, String country, String FIRST_NAME, String LAST_NAME, String addressBookName,
+                       String dateAdded, String ZIP_CODE, String EMAIL, int PHONE) {
+        this.CITY = CITY;
+        this.STATE = STATE;
+        this.ZIP_CODE = ZIP_CODE;
+        this.country = country;
+        this.street = street;
+        this.FIRST_NAME = FIRST_NAME;
+        this.contactType = contactType;
+        this.LAST_NAME = LAST_NAME;
+        this.PHONE = PHONE;
+        this.EMAIL = EMAIL;
+        this.dateAdded = dateAdded;
+        this.addressBookName = addressBookName;
+    }
+
+    public void writeData(String STATE, String street, String CITY, String contactType, String country, String FIRST_NAME, String LAST_NAME, String addressBookName,
+                          String dateAdded, String ZIP_CODE, String EMAIL, int PHONE) {
+        int zip = Integer.parseInt(ZIP_CODE);
+        List<AddressBook> innerList = new ArrayList<>();
+        innerList = addressBookDBService.write(STATE, street, CITY, contactType, country,
+                FIRST_NAME, LAST_NAME, addressBookName, dateAdded, zip,
+
+                EMAIL, PHONE);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(FIRST_NAME, LAST_NAME, PHONE, ZIP_CODE);
+    }
+
+
+    public void writeMultipleContactsToAddressBook(ArrayList<AddressBook> listToAdd) {
+        List<Boolean> check = new ArrayList<>();
+        String name;
+        Map<Integer, Boolean> AdditionStatus = new HashMap<>();
+        listToAdd.stream().forEach(addressBook -> {
+            Runnable task = () -> {
+                AdditionStatus.put(addressBook.hashCode(), false);
+                System.out.println("Employee Beign Added: " + Thread.currentThread().getName());
+                this.writeData(addressBook.STATE, addressBook.street, addressBook.CITY, addressBook.contactType, addressBook.country,
+                        addressBook.FIRST_NAME, addressBook.LAST_NAME, addressBook.addressBookName, addressBook.dateAdded, addressBook.ZIP_CODE,
+                        addressBook.EMAIL, addressBook.PHONE);
+                System.out.println(AdditionStatus);
+                AdditionStatus.put(addressBook.hashCode(), true);
+                System.out.println("After addition :" + Thread.currentThread().getName());
+            };
+            Thread thread = new Thread(task, addressBook.FIRST_NAME);
+            thread.start();
+        });
+        while (AdditionStatus.containsValue(false)) {
+            try {
+                Thread.sleep(4500000, 55555555);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
 
     public String getFIRST_NAME() {
         return FIRST_NAME;
