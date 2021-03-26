@@ -117,10 +117,6 @@ public class AddressBook {
         this.arrayOfContact = new ArrayList<>(arrayOfContact);
     }
 
-    public int countEntries() {
-        return this.arrayOfContact.size();
-    }
-
 
     public void writeData(String STATE, String street, String CITY, String contactType, String country, String FIRST_NAME, String LAST_NAME, String addressBookName,
                           String dateAdded, String ZIP_CODE, String EMAIL, int PHONE) {
@@ -647,16 +643,49 @@ public class AddressBook {
     public ArrayList<String> convertObjectToJsonString(ArrayList<AddressBook> list) {
         ArrayList<String> listString = new ArrayList<>();
         final ObjectMapper mapperJson = new ObjectMapper();
-       for(AddressBook addressBook : list) {
-           try {
+        for (AddressBook addressBook : list) {
+            try {
                 String json = mapperJson.writeValueAsString(addressBook);
-               listString.add(json);
-           } catch (JsonProcessingException e) {
-               e.printStackTrace();
-           }
-       }
-       System.out.println(listString);
-       return listString;
+                listString.add(json);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println(listString);
+        return listString;
     }
+
+    public AddressBook updateJsonObject(String lastName, String email) {
+        System.out.println(this.arrayOfContact);
+        for (AddressBook addressBook : this.arrayOfContact) {
+            if (addressBook.LAST_NAME.equals(lastName)) {
+                addressBook.EMAIL = email;
+                return addressBook;
+            }
+        }
+        return null;
+    }
+
+    public int countEntries() {
+        return this.arrayOfContact.size();
+    }
+
+    public ArrayList<AddressBook> convertJsonStringToListOObjects(String data) throws JSONException, JsonProcessingException {
+        ObjectMapper objectMapper1 = new ObjectMapper();
+        SimpleModule simpleModule = new SimpleModule();
+        simpleModule.addDeserializer(AddressBook.class, new AddressBookDeserializer());
+        objectMapper1.registerModule(simpleModule);
+        ArrayList<AddressBook> list = new ArrayList<>();
+        JSONArray jsonArray = new JSONArray(data);
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            String jsonObjectAsString = jsonObject.toString();
+            AddressBook r = objectMapper1.readValue(jsonObjectAsString, AddressBook.class);
+            list.add(r);
+        }
+        return list;
+    }
+
 }
 
