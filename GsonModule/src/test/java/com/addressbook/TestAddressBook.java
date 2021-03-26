@@ -3,6 +3,7 @@ package com.addressbook;
 import com.google.gson.*;
 import io.restassured.*;
 import io.restassured.response.Response;
+import io.restassured.specification.*;
 import org.json.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.Test;
@@ -89,7 +90,24 @@ public class TestAddressBook {
     private AddressBook[] getEmployeeList() {
         Response response = RestAssured.get("http://localhost:3000/Contacts");
         System.out.println("Employee payroll entries in JsonServer: " + response.asString());
+        System.out.println(response.asString());
         AddressBook[] arrayOfEmps = new Gson().fromJson(response.asString(), AddressBook[].class);
         return arrayOfEmps;
+    }
+
+    @Test
+    public void addMultipleContactsToJsonServer()  {
+        ArrayList<AddressBook> list = new ArrayList<>(Arrays.asList(new AddressBook("khravan","Kaja",
+                "Hyderabad","Telanaganaa","50000","ad@gmail.com",345)));
+        ArrayList<String> json = addressBook.convertObjectToJsonString(list);
+        for(String jsonString : json)
+        {
+            RequestSpecification request = RestAssured.given();
+            System.out.println(jsonString);
+            String jsonFinal = new Gson().toJson(jsonString);
+            request.header("Content-Type", "application/json");
+            request.body(jsonString);
+            request.post("http://localhost:3000/Contacts");
+        }
     }
 }
