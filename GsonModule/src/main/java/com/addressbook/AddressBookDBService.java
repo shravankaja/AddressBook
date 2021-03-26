@@ -7,8 +7,10 @@ public class AddressBookDBService {
     ArrayList<HashMap<String, List<AddressBook>>> list = new ArrayList<>();
     ArrayList<AddressBook> listOfTableObjects = new ArrayList<>();
     HashMap<String, List<AddressBook>> contactFirstNameListTables = new HashMap<>();
+    int connectionCounter = 0;
 
-    public Connection getConnectToDataBase() {
+    public synchronized Connection getConnectToDataBase() {
+        connectionCounter++;
         String jdbcURL = "jdbc:mysql://localhost:3306/addressbook?allowPublicKeyRetrieval=true&useSSL=false";
         String userName = "root";
         String password = "Addtexthere25";
@@ -22,8 +24,10 @@ public class AddressBookDBService {
             throw new IllegalStateException("No drivers loaded ", e);
         }
         try {
+            System.out.println("Processing threads: " + Thread.currentThread().getName() + " Connecting to database with ID:" + connectionCounter);
             System.out.println("Connectin to " + jdbcURL);
             connection = DriverManager.getConnection(jdbcURL, userName, password);
+            System.out.println("Porcessing thread: " + Thread.currentThread().getName() + "Id " + connectionCounter + "  " + connection);
             System.out.println(connection);
             connectionString = connection.toString();
         } catch (SQLException throwables) {
@@ -183,15 +187,15 @@ public class AddressBookDBService {
         return numberOfContacts;
     }
 
-    public List<AddressBook> write(String state, String street, String city, String contactType,
-                                   String country, String firstName, String lastName,
-                                   String addressBookName, String dateAdded, int zip, String email,
-                                   int phoneNumber) {
+    public synchronized List<AddressBook> write(String state, String street, String city, String contactType,
+                                                String country, String firstName, String lastName,
+                                                String addressBookName, String dateAdded, int zip, String email,
+                                                int phoneNumber) {
 
         Connection connection = null;
         Statement statement = null;
         try {
-            connection = this.initiateConnection();
+            connection = this.getConnectToDataBase();
             connection.setAutoCommit(false);
             statement = connection.createStatement();
         } catch (Exception e) {
