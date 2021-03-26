@@ -146,5 +146,22 @@ public class TestAddressBook {
         return null;
     }
 
+    @Test
+    public void deleteRecordInFileAsWellAsMemory() throws JSONException, JsonProcessingException {
+        deleteRecordFromMeory("Kaja");
+        RequestSpecification request = RestAssured.given();
+        Response response = request.delete("http://localhost:3000/Contacts/1");
+        Assertions.assertEquals(200, response.getStatusCode());
+
+    }
+
+    private void deleteRecordFromMeory(String lastName) throws JSONException, JsonProcessingException {
+        AddressBook[] arrayOfContact = this.getEmployeeList();
+        for (AddressBook addressBookObject : list) {
+            if (addressBookObject.LAST_NAME.equals(lastName)) {
+                addressBookObject = null;
+            }
+        }
+    }
 
 }
