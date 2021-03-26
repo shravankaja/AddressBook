@@ -99,6 +99,18 @@ public class AddressBook {
         this.addressBookName = addressBookName;
     }
 
+    private List<AddressBook> arrayOfContact;
+
+    public AddressBook(List<AddressBook> arrayOfContact) {
+        this();
+        this.arrayOfContact = new ArrayList<>(arrayOfContact);
+    }
+
+    public int countEntries() {
+        return this.arrayOfContact.size();
+    }
+
+
     public void writeData(String STATE, String street, String CITY, String contactType, String country, String FIRST_NAME, String LAST_NAME, String addressBookName,
                           String dateAdded, String ZIP_CODE, String EMAIL, int PHONE) {
         int zip = Integer.parseInt(ZIP_CODE);
