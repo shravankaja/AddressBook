@@ -1,9 +1,11 @@
 package com.addressbook;
 
+import com.fasterxml.jackson.core.*;
 import com.google.gson.*;
 import io.restassured.*;
 import io.restassured.response.Response;
 import io.restassured.specification.*;
+import org.codehaus.jackson.annotate.*;
 import org.json.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.Test;
@@ -80,28 +82,29 @@ public class TestAddressBook {
     }
 
     @Test
-    public void readFromServer() {
+    public void readFromServer() throws JSONException, JsonProcessingException {
         AddressBook[] arrayOfContact = this.getEmployeeList();
         AddressBook addressBook;
         addressBook = new AddressBook(Arrays.asList(arrayOfContact));
         Assertions.assertEquals(2, addressBook.countEntries());
     }
 
-    private AddressBook[] getEmployeeList() {
+    ArrayList<AddressBook> list = new ArrayList<>();
+
+    private AddressBook[] getEmployeeList() throws JSONException, JsonProcessingException {
         Response response = RestAssured.get("http://localhost:3000/Contacts");
         System.out.println("Employee payroll entries in JsonServer: " + response.asString());
-        System.out.println(response.asString());
+        list = addressBook.convertJsonStringToListOObjects(response.asString());
         AddressBook[] arrayOfEmps = new Gson().fromJson(response.asString(), AddressBook[].class);
         return arrayOfEmps;
     }
 
     @Test
-    public void addMultipleContactsToJsonServer()  {
-        ArrayList<AddressBook> list = new ArrayList<>(Arrays.asList(new AddressBook("khravan","Kaja",
-                "Hyderabad","Telanaganaa","50000","ad@gmail.com",345)));
+    public void addMultipleContactsToJsonServer() {
+        ArrayList<AddressBook> list = new ArrayList<>(Arrays.asList(new AddressBook("khravan", "Kaja",
+                "Hyderabad", "Telanaganaa", "40000", "ad@gmail.com", 345)));
         ArrayList<String> json = addressBook.convertObjectToJsonString(list);
-        for(String jsonString : json)
-        {
+        for (String jsonString : json) {
             RequestSpecification request = RestAssured.given();
             System.out.println(jsonString);
             String jsonFinal = new Gson().toJson(jsonString);
@@ -110,4 +113,38 @@ public class TestAddressBook {
             request.post("http://localhost:3000/Contacts");
         }
     }
+
+    @Test
+    public void updateRecordInJsonServer() throws JSONException, JsonProcessingException {
+        AddressBook[] arrayOfContact = this.getEmployeeList();
+        AddressBook addressBook;
+        addressBook = new AddressBook(Arrays.asList(arrayOfContact));
+        AddressBook addressBook1 = updateRecordInServer("Kaja", "s@12.com");
+        ArrayList<AddressBook> list = new ArrayList<>();
+        list.add(addressBook1);
+        ArrayList<String> json = addressBook.convertObjectToJsonString(list);
+        for (String jsonString : json) {
+            RequestSpecification request = RestAssured.given();
+            System.out.println(jsonString);
+            String jsonFinal = new Gson().toJson(jsonString);
+            request.header("Content-Type", "application/json");
+            request.body(jsonString);
+            Response response = request.put("http://localhost:3000/Contacts/1");
+            Assertions.assertEquals(200, response.getStatusCode());
+        }
+
+    }
+
+    private AddressBook updateRecordInServer(String lastName, String email) throws JSONException, JsonProcessingException {
+        AddressBook[] arrayOfContact = this.getEmployeeList();
+        for (AddressBook addressBookObject : list) {
+            if (addressBookObject.LAST_NAME.equals(lastName)) {
+                addressBookObject.EMAIL = email;
+                return addressBookObject;
+            }
+        }
+        return null;
+    }
+
+
 }
