@@ -1,6 +1,7 @@
 package com.addressbook;
 
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.*;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.annotation.*;
@@ -97,6 +98,16 @@ public class AddressBook {
         this.EMAIL = EMAIL;
         this.dateAdded = dateAdded;
         this.addressBookName = addressBookName;
+    }
+
+    public AddressBook(String FIRST_NAME, String LAST_NAME, String CITY, String STATE, String ZIP_CODE, String EMAIL, int PHONE) {
+        this.FIRST_NAME = FIRST_NAME;
+        this.LAST_NAME = LAST_NAME;
+        this.CITY = CITY;
+        this.STATE = STATE;
+        this.ZIP_CODE = ZIP_CODE;
+        this.EMAIL = EMAIL;
+        this.PHONE = PHONE;
     }
 
     private List<AddressBook> arrayOfContact;
@@ -633,6 +644,19 @@ public class AddressBook {
         }
     }
 
-
+    public ArrayList<String> convertObjectToJsonString(ArrayList<AddressBook> list) {
+        ArrayList<String> listString = new ArrayList<>();
+        final ObjectMapper mapperJson = new ObjectMapper();
+       for(AddressBook addressBook : list) {
+           try {
+                String json = mapperJson.writeValueAsString(addressBook);
+               listString.add(json);
+           } catch (JsonProcessingException e) {
+               e.printStackTrace();
+           }
+       }
+       System.out.println(listString);
+       return listString;
+    }
 }
 
