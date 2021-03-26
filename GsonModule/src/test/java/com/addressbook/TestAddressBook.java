@@ -1,6 +1,8 @@
 package com.addressbook;
 
-import org.codehaus.jackson.annotate.*;
+import com.google.gson.*;
+import io.restassured.*;
+import io.restassured.response.Response;
 import org.json.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.Test;
@@ -74,5 +76,20 @@ public class TestAddressBook {
         addressBook.writeMultipleContactsToAddressBook(listToAdd);
         Instant end = Instant.now();
         System.out.println("Duration with thread: " + Duration.between(start, end));
+    }
+
+    @Test
+    public void readFromServer() {
+        AddressBook[] arrayOfContact = this.getEmployeeList();
+        AddressBook addressBook;
+        addressBook = new AddressBook(Arrays.asList(arrayOfContact));
+        Assertions.assertEquals(2, addressBook.countEntries());
+    }
+
+    private AddressBook[] getEmployeeList() {
+        Response response = RestAssured.get("http://localhost:3000/Contacts");
+        System.out.println("Employee payroll entries in JsonServer: " + response.asString());
+        AddressBook[] arrayOfEmps = new Gson().fromJson(response.asString(), AddressBook[].class);
+        return arrayOfEmps;
     }
 }
